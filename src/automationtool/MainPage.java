@@ -31,6 +31,7 @@ public class MainPage extends JFrame{
     private JButton openButton;
     private JScrollPane filterScrollPane,placeNameScrollPane,organismNameScrollPane,specimenScrollPane;
     private DefaultListModel muttableList,muttablePlaceList,muttableorganismList,muttableSpecimenList;
+    private ArrayList<ArrayList<String>> filters;
     Dimension dim;
     JMenuBar menuBar;
     JMenu file;
@@ -130,7 +131,7 @@ public class MainPage extends JFrame{
         
         outputBox = new JTextArea();
         
-        //outputBox.setEditable(false);
+        outputBox.setEditable(false);
         outputBox.setLineWrap(true);
         JScrollPane outputScroll = new JScrollPane(outputBox, 
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
@@ -247,6 +248,12 @@ public class MainPage extends JFrame{
         }
         return list;
     }
+    /*
+    Below class implements action listener. When Open button is clicked it opens a dialog 
+    box for selecting a file and displays the file data in table format.
+    When analyze button is clicked then it will filter all the data based on the selected
+    options. Output is the AND of all filters(A&&B&&C->Output) i.e common data for selected filters.
+    */
     private class ClickAction implements ActionListener {
 
         @Override
@@ -262,17 +269,32 @@ public class MainPage extends JFrame{
                     filterNames = fillTable(table,dataBaseTable);
                 }
             } else if(e.getSource() == analyzeButton) {
-                if(filterList.getSelectedIndex() == -1)
-                    return;
-                String selectedFilter = muttableList.get(filterList.getSelectedIndex()).toString();
-                System.out.println(selectedFilter);
-                HashMap<String,Integer> map = TestFilter.getTestFilter(DatabaseHandler.getTable(), selectedFilter);
+                ArrayList<String> filter1,filter2,filter3,filter4;
+                filter1 = new ArrayList<>();
+                filter2 = new ArrayList<>();
+                filter3 = new ArrayList<>();
+                filter4 = new ArrayList<>();
+                /*
+                Will get all the selected values of 4 filters
+                */
+                for(int va:filterList.getSelectedIndices())
+                    filter1.add(muttableList.get(va).toString());
+                for(int va:placeList.getSelectedIndices())
+                    filter2.add(muttablePlaceList.get(va).toString());
+                for(int va:organismList.getSelectedIndices())
+                    filter3.add(muttableorganismList.get(va).toString());
+                for(int va:specimenList.getSelectedIndices())
+                    filter4.add(muttableSpecimenList.get(va).toString());
+                filters.add(filter1);
+                filters.add(filter2);
+                filters.add(filter3);
+                filters.add(filter4);
+                HashMap<String,Integer> map = AllFilter.getTestFilter(DatabaseHandler.getTable(), filters);
                 map.keySet().forEach((key) -> {
                     if(key != null)
                     outputBox.append(key+" "+map.get(key)+"\n");
                     
                 });
-                new ChartTest(map,muttableList.get(filterList.getSelectedIndex()).toString());
             }
         }
         

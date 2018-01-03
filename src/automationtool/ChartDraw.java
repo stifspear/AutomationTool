@@ -16,10 +16,10 @@ import org.jfree.data.category.DefaultCategoryDataset;
  *
  * @author stifspear
  */
-public class ChartTest {
+public class ChartDraw {
     HashMap<String,Integer> map;
     String colName;
-    public ChartTest(HashMap<String,Integer> map,String colName){
+    public ChartDraw(HashMap<String,Integer> map,String colName){
         this.map = map;
         this.colName = colName;
         draw();
